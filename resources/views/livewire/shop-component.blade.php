@@ -25,22 +25,24 @@
                 <ul class="list-unstyled templatemo-accordion">
                     <li class="pb-3">
                         <a class="d-flex justify-content-between h3 text-decoration-none" 
-                           href="#" data-bs-toggle="collapse" data-bs-target="#categoryCollapse">
+                           href="#" data-bs-toggle="collapse" data-bs-target="#categoryCollapse"
+                           x-data="{ open: false }" @click="open = !open">
                             Fashion & Apparel
-                            <i class="fa fa-fw fa-chevron-circle-up mt-1 toggle-icon"></i> <!-- Icon toggle -->
+                            <i :class="open ? 'fa fa-fw fa-chevron-circle-up' : 'fa fa-fw fa-chevron-circle-down'" class="mt-1"></i>
                         </a>
-                        <ul id="categoryCollapse" class="collapse list-unstyled ms-3"> <!-- 1st level collapsible -->
+                        <ul id="categoryCollapse" class="collapse list-unstyled ms-3">
                             @foreach($categories as $category)
                                 <li class="pb-3">
-                                    <a class="d-flex justify-content-between h4 text-decoration-none fw-semibold" 
-                                       href="#" data-bs-toggle="collapse" data-bs-target="#subcategoryCollapse{{ $category->id }}"> 
+                                    <a class="d-flex justify-content-between h4 text-decoration-none fw-semibold"
+                                       href="#" data-bs-toggle="collapse" data-bs-target="#subcategoryCollapse{{ $category->id }}">
                                         {{ $category->category_name }}
                                         <i class="fa fa-fw mt-1"></i>
                                     </a>
-                                    <ul id="subcategoryCollapse{{ $category->id }}" class="collapse list-unstyled ms-4"> <!-- 2nd level collapsible -->
+                                    <ul id="subcategoryCollapse{{ $category->id }}" class="collapse list-unstyled ms-4">
                                         @foreach($category->subcategories as $subcategory)
                                             <li>
-                                                <a class="text-decoration-none" href="#">
+                                                <a class="text-decoration-none" href="#" 
+                                                   wire:click.prevent="filterBySubcategory({{ $subcategory->id }})">
                                                     {{ $subcategory->subcategory_name }}
                                                 </a>
                                             </li>
@@ -48,9 +50,12 @@
                                     </ul>
                                 </li>
                             @endforeach
-                        </ul>
+                        </ul>                                              
                     </li>
                 </ul>
+                <button wire:click="clearFilters" class="btn btn-outline-secondary mt-2">
+                    Clear Filter
+                </button>                
             </div>
             
             <div class="col-lg-9">
@@ -58,15 +63,23 @@
                     <div class="col-md-6">
                         <ul class="list-inline shop-top-menu pb-3 pt-1">
                             <li class="list-inline-item">
-                                <a class="h3 text-dark text-decoration-none mr-3" href="#">All</a>
+                                <a class="h3 text-dark text-decoration-none mr-3" href="#" 
+                                   wire:click.prevent="filterByCategory(null)">All</a>
                             </li>
                             <li class="list-inline-item">
-                                <a class="h3 text-dark text-decoration-none mr-3" href="#">Men's</a>
+                                <a class="h3 text-dark text-decoration-none mr-3" href="#" 
+                                   wire:click.prevent="filterByCategory('Men\'s Clothing')">Men's</a>
                             </li>
                             <li class="list-inline-item">
-                                <a class="h3 text-dark text-decoration-none" href="#">Women's</a>
+                                <a class="h3 text-dark text-decoration-none mr-3" href="#" 
+                                   wire:click.prevent="filterByCategory('Women\'s Clothing')">Women's</a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a class="h3 text-dark text-decoration-none" href="#" 
+                                   wire:click.prevent="filterByCategory('Kid\'s Clothing')">Kids</a>
                             </li>
                         </ul>
+                        
                     </div>
                     <div class="col-md-6 pb-4">
                         <div class="d-flex">
@@ -84,8 +97,8 @@
                         <div class="card mb-4 product-wap rounded-0">
                             <div class="card rounded-0">
                                 <img class="card-img rounded-0 img-fluid" 
-    style="width: auto; height: 400px; object-fit: cover;" 
-    src="{{ Storage::url(optional($product->images->first())->img_path ?? 'default.jpg') }}">
+                                style="width: auto; height: 400px; object-fit: cover;" 
+                                src="{{ Storage::url(optional($product->images->first())->img_path ?? 'default.jpg') }}">
 
                                 <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                                     <ul class="list-unstyled">
@@ -117,8 +130,7 @@
                         </div>
                     </div>
                     @endforeach
-
-                    </div>
+                </div>
     
                 <div div="row">
                     <ul class="pagination pagination-lg justify-content-end">
